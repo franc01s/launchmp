@@ -5,8 +5,10 @@ services:
       context: .
       network: host
     image: registry.its-k8s-dev.swatchgroup.net/common/launchmp:latest
-    entrypoint: ["gunicorn", "-w 1", "-b 0.0.0.0:5000" ,"run:app"]
+    entrypoint: ["gunicorn", "-w 1", "-b 0.0.0.0:5000" ,"-t 120", "run:app"]
     ports:
-    - 5000:5000
-    env_file:
-    - .env
+      - 5000:5000
+    environment:
+      - PC_USERNAME=${PC_USERNAME}
+      - PC_PASSWORD=${PC_PASSWORD}
+      - TOKENS=${TOKENS}

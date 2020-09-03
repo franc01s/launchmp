@@ -25,6 +25,8 @@ def create_app():
     from app.base import base as views_blueprint
     app.register_blueprint(views_blueprint)
 
+    from app.tasks import tasks_bp as tasks_blueprint
+    app.register_blueprint(tasks_blueprint)
 
     # Create admin
 
