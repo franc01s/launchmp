@@ -1,38 +1,49 @@
+from flask import request, abort, jsonify
+
+from app import auth, tokens, log
 from . import base
 from .utils import launch
-from flask import request, abort, jsonify
-from app import auth, tokens
 
 
 @auth.verify_token
 def verify_token(token):
     if token in tokens:
         return token
+    else:
+        log.error('Unauthorize')
 
 
 @base.route('/health')
 def health():
-    return jsonify({"status":"ready"})
+    log.info('Ping Ready')
+    return jsonify({"status": "ready"})
+
 
 @base.route('/')
-@auth.login_required
 def status():
     return jsonify({'result': 'ready'}), 200
 
 
-@base.route('/api/v1/mplaunch', methods=['GET', 'POST'])
+@base.route('/api/v1/mplaunch', methods=['POST'])
+@auth.login_required
 def launchmpx():
-    if (not request.json) or \
-            (not 'mpname' in request.json) or \
-            (not 'mpversion' in request.json) or \
-            (not 'appname' in request.json) or \
-            (not 'projectname' in request.json):
-        abort(400)
-    mpname = request.json.get('mpname', 'N/A')
-    mpversion = request.json.get('mpversion', "N/A")
-    projectname = request.json.get('projectname', "N/A")
-    appname = request.json.get('appname', "N/A")
+    try:
+        if (not request.json) or \
+                (not 'mpname' in request.json) or \
+                (not 'mpversion' in request.json) or \
+                (not 'appname' in request.json) or \
+                (not 'projectname' in request.json):
+            log.error('fields mpname|mpversion|appname|projectname must be in body POST  ')
+            abort(400)
+        mpname = request.json.get('mpname', 'N/A')
+        mpversion = request.json.get('mpversion', "N/A")
+        projectname = request.json.get('projectname', "N/A")
+        appname = request.json.get('appname', "N/A")
 
-    launch(mpname, mpversion, projectname, appname)
+        log.info(f'Market place launched {mpname}, {mpversion}, {projectname}, {appname}')
+        launch(mpname, mpversion, projectname, appname)
 
-    return jsonify({'result': 'success'}), 201
+        return jsonify({'result': 'success'}), 201
+    except Exception as e:
+        log.error('e')
+        return jsonify({'result': e}), 500
