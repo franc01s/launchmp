@@ -1,13 +1,10 @@
 from flask import Flask
-from flask_login import LoginManager
-from flask_bootstrap import Bootstrap
+from flask_httpauth import HTTPTokenAuth
 from app.config import config
+import os
 
-
-login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
-
-bootstrap = Bootstrap()
+auth = HTTPTokenAuth(scheme='Bearer')
+tokens = os.environ.get('TOKENS').split()
 
 
 def create_app():

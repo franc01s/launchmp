@@ -1,9 +1,12 @@
 version: '3.7'
 services:
-  netbilling:
+  launchmp:
     build:
       context: .
+      network: host
     image: registry.its-k8s-dev.swatchgroup.net/common/launchmp:latest
-    command:  ["python","main.py"]
-    #command:  ["tail","-f",  "/dev/null"]
-
+    entrypoint: ["gunicorn", "-w 1", "-b 0.0.0.0:5000" ,"run:app"]
+    ports:
+    - 5000:5000
+    env_file:
+    - .env

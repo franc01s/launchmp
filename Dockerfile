@@ -15,6 +15,7 @@ RUN pip install  -r /tmp/requirements.txt
 COPY ./  /app/
 
 WORKDIR /app
+EXPOSE 5000
 
-CMD ["python", "run.py"]
+CMD ["gunicorn", "-w 1", "-b 0.0.0.0:5000" ,"run:app"]
 #CMD ["tail", "-f", "/dev/null"]
