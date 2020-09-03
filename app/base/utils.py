@@ -173,14 +173,14 @@ def launch(mpname, mpversion, projectname, appname, appprofil, appparams):
         payload = resp.json()
         launch_state = payload['status']['state']
         if launch_state == 'success':
-            log.info("App request is successfull")
+            log.info(f"App {appname}, vm {vm}  request is successfull")
             app_uuid = payload['status']['application_uuid']
             break
         elif launch_state == 'failed':
-            log.error("App request failed")
+            log.error(f"App {appname}, vm {vm}  request failed")
             abort(500)
             break
-        log.info("App request is in pending state")
+        log.info(f"App {appname}, vm {vm}  is in pending state")
         time.sleep(10)
 
     url1 = "https://" + PC_IP + ":9440/api/nutanix/v3/apps/" + str(app_uuid)
@@ -189,11 +189,11 @@ def launch(mpname, mpversion, projectname, appname, appprofil, appparams):
         payload = resp.json()
         app_state = payload['status']['state']
         if app_state == 'running':
-            log.info("App is launched successfull")
+            log.info(f"App {appname}, vm {vm}  is launched successfull")
             break
         elif app_state == 'error' or app_state == 'failed':
-            log.error("App launch failed")
+            log.error(f"App {appname}, vm {vm} launch failed")
             abort(500)
             break
-        log.info("App is in provisioning state")
+        log.info(f"App {appname}, vm {vm} is in provisioning state")
         time.sleep(10)

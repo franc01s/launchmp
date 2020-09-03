@@ -2,6 +2,7 @@ import threading
 import time
 import uuid
 from functools import wraps
+from app import log
 
 from flask import abort, current_app, request, url_for, jsonify
 from werkzeug.exceptions import HTTPException, InternalServerError
@@ -46,7 +47,7 @@ def asyncrone(f):
 
     @wraps(f)
     def wrapped(*args, **kwargs):
-        def task(app, environ):
+        def task(app, environ, log):
             # Create a request context similar to that of the original request
             # so that the task can have access to flask.g, flask.request, etc.
             with app.request_context(environ):
@@ -73,7 +74,7 @@ def asyncrone(f):
         # Record the task, and then launch it
         tasks[id] = {'task': threading.Thread(
             target=task, args=(current_app._get_current_object(),
-                               request.environ))}
+                               request.environ, log))}
         tasks[id]['task'].start()
 
         # Return a 202 response, with a link that the client can use to
