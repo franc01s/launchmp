@@ -39,8 +39,9 @@ ingress:
   #      - chart-example.local
 
 ntx:
-  user: ""
+  username: ""
   password: ""
+  tokens: ""
 
 
 nodeSelector: {}

@@ -27,14 +27,14 @@ spec:
             httpGet:
               path: /health
               port: 5000
-              scheme: HTTPS
+              scheme: HTTP
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /health
               port: 5000
-              scheme: HTTPS
+              scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 20
 
@@ -48,15 +48,20 @@ spec:
           command: ["gunicorn"]
           args: ["-w 1", "-b 0.0.0.0:5000" , "run:app"]
           env:
-            - name: NTX_USER
+            - name: PC_USERNAME
               valueFrom:
                 secretKeyRef:
-                  key: ntx-user
+                  key: pc-username
                   name: launchmp
-            - name: NTX_PASSWORD
+            - name: PC_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: db-password
+                  key: pc-password
+                  name: launchmp
+            - name: TOKENS
+              valueFrom:
+                secretKeyRef:
+                  key: tokens
                   name: launchmp
             - name: VERSION
               value: {{.Chart.AppVersion}}
